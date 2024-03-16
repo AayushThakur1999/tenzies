@@ -8,6 +8,7 @@ function App() {
   const [dice, setDice] = useState(() => createNewDice())
   const [tenzies, setTenzies] = useState(false)
   const [seconds, setSeconds] = useState(0)
+  const [rollCount, setRollCount] = useState(1)
 
   useEffect(() => {
     const cleanUp = setInterval(() => {
@@ -19,6 +20,12 @@ function App() {
     }
 
     return () => clearInterval(cleanUp)
+
+    // strict mode in main.jsx renders our App 
+    // component twice and to stop the effect of 2 intervals running simultaneously and updating the seconds 
+    // by 2 everytime, we need to clear our interval through a cleanup function inside useEffect because our  
+    // component unmounts and re-renders in the case of strict mode 
+    
   }, [tenzies])
 
   useEffect(() => {
@@ -59,6 +66,7 @@ function App() {
           die : generateNewDie()
         )
       )
+      setRollCount(prevCount => prevCount + 1)
     }
   }
 
@@ -84,12 +92,18 @@ function App() {
     <main>
       {tenzies && <Confetti />}
       <div className="time-container">
+        <div>
         {`${Math.floor(seconds / 60) <= 9 ?
           "0" + Math.floor(seconds / 60) :
           Math.floor(seconds / 60)}:
           ${seconds % 60 <= 9 ?
           "0" + (seconds % 60) : 
           (seconds % 60)}`}
+        </div>
+        <div>
+          {`Rolls:${rollCount}`}
+        </div>
+        
       </div>
       <h1 className='title'>Tenzies</h1>
       <p>Roll until all dice are the same. Click each die to freeze it at its current value between rolls.</p>
