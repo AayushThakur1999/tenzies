@@ -60,6 +60,7 @@ function App() {
       setDice(createNewDice())
       setTenzies(false)
       setSeconds(0)
+      setRollCount(1)
     } else {
       setDice(oldDice =>
         oldDice.map(die => die.isHeld ?
