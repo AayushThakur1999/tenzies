@@ -31,6 +31,10 @@ main {
   text-align: center;
 }
 
+.bestTime-div {
+  font-size: 24px;
+}
+
 .time-container {
   width: 100%;
   display: flex;
@@ -127,5 +131,9 @@ main {
 
   .time-container > div {
     font-size: 18px;
+  }
+
+  .bestTime-div {
+    font-size: 15px;
   }
 }

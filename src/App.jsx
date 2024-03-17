@@ -9,25 +9,29 @@ function App() {
   const [tenzies, setTenzies] = useState(false)
   const [seconds, setSeconds] = useState(0)
   const [rollCount, setRollCount] = useState(1)
+  const [bestTime, setBestTime] = useState(
+    JSON.parse(localStorage.getItem('bestTime')) || ""
+  )
 
+  
   useEffect(() => {
     const cleanUp = setInterval(() => {
       setSeconds(prevSecs => prevSecs + 1)
     }, 1000)
-
+    
     if (tenzies) {
       clearInterval(cleanUp)
     }
-
+    
     return () => clearInterval(cleanUp)
-
+    
     // strict mode in main.jsx renders our App 
     // component twice and to stop the effect of 2 intervals running simultaneously and updating the seconds 
     // by 2 everytime, we need to clear our interval through a cleanup function inside useEffect because our  
     // component unmounts and re-renders in the case of strict mode 
     
   }, [tenzies])
-
+  
   useEffect(() => {
     const allHeld = dice.every(die => die.isHeld && die)
     const firstValue = dice[0].value
@@ -36,7 +40,16 @@ function App() {
       setTenzies(true)
     }
   }, [dice])
-
+  
+  useEffect(() => {
+    if (!bestTime && tenzies) {
+      localStorage.setItem('bestTime', seconds)
+    } else if (JSON.parse(localStorage.getItem('bestTime')) > seconds && seconds !== 0) {
+      localStorage.setItem('bestTime', seconds)
+    }
+    setBestTime(JSON.parse(localStorage.getItem('bestTime')))
+  }, [tenzies])
+  
   function generateNewDie() {
     return {
       value: Math.ceil(Math.random() * 6),
@@ -92,6 +105,14 @@ function App() {
   return (
     <main>
       {tenzies && <Confetti />}
+      <div className='bestTime-div' style={{display: bestTime ? "block" : "none"}}>
+        Best Time ~ {`${Math.floor(bestTime / 60) <= 9 ?
+          "0" + Math.floor(bestTime / 60) :
+          Math.floor(bestTime / 60)}:
+          ${bestTime % 60 <= 9 ?
+          "0" + (bestTime % 60) : 
+          (bestTime % 60)}`}
+      </div>
       <div className="time-container">
         <div>
         {`${Math.floor(seconds / 60) <= 9 ?
